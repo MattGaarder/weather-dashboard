@@ -1,89 +1,48 @@
-// click event on ID of search-button in HTML
-$("#search-button").on("click", function () {
-    // my API key (using a variable as a shortcut)
-    var apiKey = "6351c18f15de8f5271ba27903fcd1031";
-    // our queryParam will be what the user puts in the search text area
+
+var lat = 0;
+var long = 0;
+
+$("#search-button").on("click", function (event) {
+    event.preventDefault();
     var queryParam = $("#search-input").val();
-    // sets URL for ajax HTTP request
+    var apiKey = "6351c18f15de8f5271ba27903fcd1031";
     var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
-    // The AJAX call that uses or queryURL and fetches our payload
     $.ajax({
         url: queryURL,
         method: "GET"
+    }).then(function (object) {
+        console.log(object);
+        lat = object[0].lat
+        long = object[0].lon
+        console.log(lat);
+        console.log(long);
     })
-}) // the promise. When the payload is received; this function runs. "response"
-    // is the payload
-    .then(function(data) {
-        console.log(data);
-    })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-Code from weather tutorial:
-
-$( document ).ready(function() {
-	var appID = "6351c18f15de8f5271ba27903fcd1031";
-
-   	$(".query_btn").click(function(){
-
-    	var query_param = $(this).prev().val();
-
-    	if ($(this).prev().attr("placeholder") == "City") {
-    		var weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + query_param + "&units=imperial&APPID=" + appID;
-    	} else if ($(this).prev().attr("placeholder") == "Zip Code") {
-    		var weatherUrl = "http://api.openweathermap.org/data/2.5/weather?zip=" + query_param + "&units=imperial&APPID=" + appID;
-    	} 
-
-        $.getJSON(weatherUrl,function(json){
-            $("#city").html(json.name);
-            $("#main_weather").html(json.weather[0].main);
-            $("#description_weather").html(json.weather[0].description);
-            $("#weather_image").attr("src", "http://openweathermap.org/img/w/" + json.weather[0].icon + ".png");
-            $("#temperature").html(json.main.temp);
-            $("#pressure").html(json.main.pressure);
-            $("#humidity").html(json.main.humidity);
-        });
-    })
-
-    var fahrenheit = true;
-
-	$("#convertToCelsius").click(function() {
-		if (fahrenheit) {
-			$("#temperature").text(((($("#temperature").text() - 32) * 5) / 9));
-		}
-		fahrenheit = false;
-	});
-
-	$("#convertToFahrenheit").click(function() {
-		if (fahrenheit == false) {
-			$("#temperature").text((($("#temperature").text() * (9/5)) + 32));
-		}
-		fahrenheit = true;
-	});
-
+    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + long + "&appid=" + apiKey;
+    $.ajax({
+        url: forecast5URL,
+        method: "GET"
+    }).then(function (object) {
+        console.log(object);
+    });
 });
 
-*/
+getMidday()
+// https://stackoverflow.com/questions/48761562/openweathermap-api-get-1-time-slot-from-5-day-forcast
+
+getData(){
+    var arraycontainsMidday;
+    this.http.get('https://api.openweathermap.org/data/2.5/forecast?id=3362024&APPID=bbcf57969e78d1300a815765b7d587f0&units=metric').map(res=>res.json()).subscribe(data => {
+    this.items = data;
+      for(var i = 0; i < this.items.list.length; i++){
+        this.dates = this.items.list[i].dt_txt.substring(10);
+        this.temps = this.items.list[i].main;
+        //if 12 o'clock middat is found
+        arraycontainsMidday = (this.dates.indexOf("12:00:00") > -1);
+      }
+
+      for(var j = 0; j < this.items.list.length; j++){
+        this.temps = this.items.list[j].main.temp;
+      }
+
+    })
+  }
