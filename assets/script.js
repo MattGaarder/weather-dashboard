@@ -4,49 +4,58 @@ var long = 0;
 // if we make this weather-btn on click, it will take the search input value as the query parameter.
 // I want to create logic that states if search value is empty, to instead take the data-name attribute of the weather button clicked
 // to be used as the query parameter
-// before the mangle
-$(".weather-btn").each(function () {
-    $(this).on("click", function (event) {
-        event.preventDefault();
-        var queryParam = $("#search-input").val();
-        if ($("#search-input").val() === "") {
-            queryParam = $(this).attr("data-name");
-        }
-        var apiKey = "6351c18f15de8f5271ba27903fcd1031";
-        var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(function (wobject) {
-            console.log(wobject);
-            console.log(wobject[0].name);
-            lat = wobject[0].lat
-            long = wobject[0].lon
-            console.log(lat);
-            console.log(long);
-            // create a button and append it to the #history div- this button will have data-name be wobject[0].name
-            // I also need to add a class to each button so that I can add an event listener on all buttons with the class .weather-btn
-            var cityButton = $("<button>");
-            cityButton.addClass("weather-btn");
-            cityButton.attr("data-name", wobject[0].name);
-            cityButton.text(wobject[0].name);
-            var history = $("#history");
-            history.append(cityButton);
-        })
-        var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + long + "&appid=" + apiKey;
-        $.ajax({
-            url: forecast5URL,
-            method: "GET"
-        }).then(function (object) {
-            var todayTemp = $("#temp");
-            todayTemp.text(object.list[0].main.temp);
-            var todayHumidity = $("#humidity");
-            todayHumidity.text(object.list[0].main.humidity);
-            var todayWind = $("#wind");
-            todayWind.text(object.list[0].wind.speed);
-        })
-        });
-    });
+// before
+function searchWeather() {
+    var apiKey = "6351c18f15de8f5271ba27903fcd1031";
+    var queryParam = $("#search-input").val();
+    console.log(thisElement);
+    if($("#search-input").val() === "") {
+        queryParam = $(thisElement).attr("data-name");
+    }
+    var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(function (wobject) {
+        console.log(queryURL);
+        console.log(wobject);
+        console.log(wobject[0].name);
+        lat = wobject[0].lat
+        long = wobject[0].lon
+        console.log(lat);
+        console.log(long);
+        // create a button and append it to the #history div- this button will have data-name be wobject[0].name
+        // I also need to add a class to each button so that I can add an event listener on all buttons with the class .weather-btn
+        var cityButton = $("<button>");
+        cityButton.addClass("weather-btn");
+        cityButton.attr("data-name", wobject[0].name);
+        cityButton.text(wobject[0].name);
+        var history = $("#history");
+        history.append(cityButton);
+    })
+    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + long + "&appid=" + apiKey;
+    $.ajax({
+        url: forecast5URL,
+        method: "GET"
+    }).then(function (object) {
+        var todayTemp = $("#temp");
+        todayTemp.text(object.list[0].main.temp);
+        var todayHumidity = $("#humidity");
+        todayHumidity.text(object.list[0].main.humidity);
+        var todayWind = $("#wind");
+        todayWind.text(object.list[0].wind.speed);
+    })
+}
+
+
+$(".weather-btn").on("click", function(event){
+    event.preventDefault();
+    searchWeather();
+});
+$(".weather-btn").on("click", function() {
+    console.log("this button works")
+})
+
 
 
 
