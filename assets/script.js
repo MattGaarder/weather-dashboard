@@ -8,10 +8,6 @@ var long = 0;
 function searchWeather() {
     var apiKey = "6351c18f15de8f5271ba27903fcd1031";
     var queryParam = $("#search-input").val();
-    console.log(thisElement);
-    if($("#search-input").val() === "") {
-        queryParam = $(thisElement).attr("data-name");
-    }
     var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
     $.ajax({
         url: queryURL,
@@ -48,7 +44,7 @@ function searchWeather() {
 }
 
 
-$(".weather-btn").on("click", function(event){
+$(".search-button").on("click", function(event){
     event.preventDefault();
     searchWeather();
 });
