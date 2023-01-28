@@ -4,6 +4,7 @@ var long = 0;
 // if we make this weather-btn on click, it will take the search input value as the query parameter.
 // I want to create logic that states if search value is empty, to instead take the data-name attribute of the weather button clicked
 // to be used as the query parameter
+// before the mangle
 $(".weather-btn").each(function () {
     $(this).on("click", function (event) {
         event.preventDefault();
