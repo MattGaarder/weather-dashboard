@@ -3,6 +3,13 @@
 // if we make this weather-btn on click, it will take the search input value as the query parameter.
 
 
+// hypotheticalWeatherObject = {
+//    cityName: (coordsObj[0].name) as generated from getCoords() function. But, this has been saved as a data-attribute, which we can recall by saying $(this).data("name"),
+//    latLong: {lat: lat,
+//     long: long}        
+// }
+
+
 // to-do list:
 // make my getCoords function modular, so that the key will be the first part of this function
 // i.e. the name of the city: this function will also make it so that the data-name of the button is set as search-input value
@@ -10,7 +17,8 @@
 var apiKey = "6351c18f15de8f5271ba27903fcd1031";
 
 function getCoords() {
-    var queryParam = $("#search-input").val() || $(this).attr("data-name");
+    var queryParam = $("#search-input").val();
+    // || $(this).attr("data-name");
     var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
     return $.ajax({
         url: queryURL,
@@ -31,18 +39,32 @@ function getCoords() {
         cityButton.text(coordsObj[0].name);
         var history = $("#history");
         history.append(cityButton);
-        var latLong = {
-            lat: lat,
-            long: long
-        };
+        
         // console.log(latLong.lat);
         
-        return latLong;
+
+        
         // Question: Is this necessary- how to pass results from one call to another?
         // How to return multiple values?
         // How to install extensions?
         // How do arrow functions work, in the way they operate with "this"?
         // How do I get "this" to be passed from one function to another?
+        // How does event delegation work and when is it necessary?
+        // Clarifying again what is the purpose of parsing here and in cal project
+        var weatherObject = JSON.parse(localStorage.getItem("savedWeatherObject"))||{};
+        // I think I am getting the savedWeatherObject and then overwritting it
+        var cityName = coordsObj[0].name;
+        var latLong = {
+            lat: lat,
+            long: long
+        };
+        weatherObject[cityName] = latLong;
+        console.log(weatherObject);
+        var weatherArray = JSON.parse(localStorage.getItem("weatherArray")) || [];
+        weatherArray.push(weatherObject);
+        localStorage.setItem("weatherArray", JSON.stringify(weatherArray));
+        
+        return latLong;
     })
 };
 
@@ -65,6 +87,10 @@ function getDeets(latLong) {
     })
 };
 
+// function displayButtons() {
+//     var buttons = JSON.parse(localStorage.getItem("savedWeatherObject"))
+//     for(var i = 0; i < )
+// }
 
 $("#search-button").on("click", function (event) {
     event.preventDefault();
@@ -79,7 +105,12 @@ $("#search-button").on("click", function (event) {
     });
 });
 
+var weatherButton = $('.weather-btn');
 
+// function redisplayBtnInfo(event) {
+//     var btnClicked = $(event.target);
+//     // This function will simply redisplay 
+// }
 
 
 
