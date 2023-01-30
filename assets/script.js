@@ -10,19 +10,19 @@
 var apiKey = "6351c18f15de8f5271ba27903fcd1031";
 
 function getCoords() {
-    var queryParam = $("#search-input").val();
+    var queryParam = $("#search-input").val() || $(this).attr("data-name");
     var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
     return $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function (coordsObj) {
-        console.log(queryURL);
-        console.log(coordsObj);
-        console.log(coordsObj[0].name);
+        // console.log(queryURL);
+        // console.log(coordsObj);
+        // console.log(coordsObj[0].name);
         var lat = coordsObj[0].lat
         var long = coordsObj[0].lon
-        console.log(lat);
-        console.log(long);
+        // console.log(lat);
+        // console.log(long);
         // create a button and append it to the #history div- this button will have data-name be coordsObj[0].name
         // I also need to add a class to each button so that I can add an event listener on all buttons with the class .weather-btn
         var cityButton = $("<button>");
@@ -40,19 +40,22 @@ function getCoords() {
         return latLong;
         // Question: Is this necessary- how to pass results from one call to another?
         // How to return multiple values?
+        // How to install extensions?
+        // How do arrow functions work, in the way they operate with "this"?
+        // How do I get "this" to be passed from one function to another?
     })
 };
 
 
 
 function getDeets(latLong) {
-    console.log(latLong);
+    // console.log(latLong);
     var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latLong.lat + "&lon=" + latLong.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
-        console.log(weatherObj);
+        // console.log(weatherObj);
         var todayTemp = $("#temp");
         todayTemp.text(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
@@ -63,13 +66,19 @@ function getDeets(latLong) {
 };
 
 
-$(".search-button").on("click", function(event){
+$("#search-button").on("click", function (event) {
     event.preventDefault();
-    getCoords().then(function(latLong) {
-    getDeets(latLong);
-    // console.log(latLong);
+    // var that = this.dataset.name;
+    // console.log(that.dataset.name)
+    // console.log(that);
+    // console.log(this);
+    // console.log($(this).attr("data-name"));
+    getCoords().then((latLong) => {
+        getDeets(latLong);
+        // console.log(latLong);
     });
 });
+
 
 
 
