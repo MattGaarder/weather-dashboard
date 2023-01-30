@@ -4,66 +4,66 @@
 
 
 // to-do list:
-// make my searchWeather function modular, so that the key will be the first part of this function
+// make my getCoords function modular, so that the key will be the first part of this function
 // i.e. the name of the city: this function will also make it so that the data-name of the button is set as search-input value
 // so that in subsequent clicks of the weather button the key will be the data-name, and the value will be the result of an ajax call to the API second getDeets() function.
+var apiKey = "6351c18f15de8f5271ba27903fcd1031";
 
-
-function searchWeather() {
-    var apiKey = "6351c18f15de8f5271ba27903fcd1031";
+function getCoords() {
     var queryParam = $("#search-input").val();
     var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
-    $.ajax({
+    return $.ajax({
         url: queryURL,
         method: "GET"
-    }).then(function (wobject) {
+    }).then(function (coordsObj) {
         console.log(queryURL);
-        console.log(wobject);
-        console.log(wobject[0].name);
-        var lat = wobject[0].lat
-        var long = wobject[0].lon
+        console.log(coordsObj);
+        console.log(coordsObj[0].name);
+        var lat = coordsObj[0].lat
+        var long = coordsObj[0].lon
         console.log(lat);
         console.log(long);
-        // create a button and append it to the #history div- this button will have data-name be wobject[0].name
+        // create a button and append it to the #history div- this button will have data-name be coordsObj[0].name
         // I also need to add a class to each button so that I can add an event listener on all buttons with the class .weather-btn
         var cityButton = $("<button>");
         cityButton.addClass("weather-btn");
-        cityButton.attr("data-name", wobject[0].name);
-        cityButton.text(wobject[0].name);
+        cityButton.attr("data-name", coordsObj[0].name);
+        cityButton.text(coordsObj[0].name);
         var history = $("#history");
         history.append(cityButton);
         var latLong = {
             lat: lat,
             long: long
         };
-        console.log(latLong.lat);
-        console.log(latLong);
+        // console.log(latLong.lat);
+        
         return latLong;
     })
 };
 
 function getDeets(latLong) {
-    console.log(latLong.lat);
+    console.log(latLong);
     var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latLong.lat + "&lon=" + latLong.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
-    }).then(function (object) {
-        console.log(object);
+    }).then(function (weatherObj) {
+        console.log(weatherObj);
         var todayTemp = $("#temp");
-        todayTemp.text(object.list[0].main.temp);
+        todayTemp.text(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
-        todayHumidity.text(object.list[0].main.humidity);
+        todayHumidity.text(weatherObj.list[0].main.humidity);
         var todayWind = $("#wind");
-        todayWind.text(object.list[0].wind.speed);
+        todayWind.text(weatherObj.list[0].wind.speed);
     })
 };
 
 
 $(".search-button").on("click", function(event){
     event.preventDefault();
-    searchWeather().then(function(latLong) {
+    getCoords().then(function(latLong) {
     getDeets(latLong);
+    // console.log(latLong);
     });
 });
 
