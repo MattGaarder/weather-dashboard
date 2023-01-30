@@ -4,12 +4,12 @@
 // 
 
 
-
+var currentDay = moment().format("ddd D MMM YYYY");
 var apiKey = "6351c18f15de8f5271ba27903fcd1031";
 
 function getCoords() {
     var queryParam = $("#search-input").val();
-    // || $(this).attr("data-name");
+
     var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + queryParam + "&appid=" + apiKey;
     return $.ajax({
         url: queryURL,
@@ -19,22 +19,6 @@ function getCoords() {
         var lat = coordsObj[0].lat
         var long = coordsObj[0].lon
 
-        // var cityButton = $("<button>");
-        // cityButton.addClass("weather-btn");
-        // cityButton.attr("data-name", coordsObj[0].name);
-        // cityButton.text(coordsObj[0].name);
-        // var history = $("#history");
-        // history.append(cityButton);
-             
-        // Question: how to pass results from one call to another?
-        // How to return multiple values?
-        // How do arrow functions work, in the way they operate with "this"?
-        // How do I get "this" to be passed from one function to another?
-        // How does event delegation work and when is it necessary?
-        // Clarifying again what is the purpose of parsing here and in cal project
-        // How do you reference the key of an object if you don't know the property of the object?
-        // When to use bracket notation 
-
         var city = {
             name: coordsObj[0].name,
             lat: lat,
@@ -43,7 +27,6 @@ function getCoords() {
 
         getDeets(city);
         saveToLS(city);
-        
     })
 };
 
@@ -56,7 +39,6 @@ function saveToLS(cityArb) {
     } 
         weatherArray.push(cityArb);
         localStorage.setItem("weatherArray", JSON.stringify(weatherArray));
-        console.log(weatherArray);
         createButton(cityArb);
 }
 
@@ -76,7 +58,6 @@ function createButton(city) {
 }
 
 function infoFromButton() {
-    console.log(this);
     var city = {
         name: $(this).data("name"),
         lat: $(this).data("lat"),
@@ -87,24 +68,29 @@ function infoFromButton() {
 }
 
 function getDeets(args) {
-    console.log(args);
+    console.log(args.name);
     var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + args.lat + "&lon=" + args.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
-        
+        var cityName = $(".card-title");
+        cityName.text(args.name);
+        var date = $(".time-title");
+        date.text(currentDay);
         var todayTemp = $("#temp");
         todayTemp.text(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
         todayHumidity.text(weatherObj.list[0].main.humidity);
         var todayWind = $("#wind");
         todayWind.text(weatherObj.list[0].wind.speed);
+        var weatherIcon = $("#weather-icon");
+        weatherIcon.attr("src", "http://openweathermap.org/img/wn/" + weatherObj.list[0].weather[0].icon + "@4x.png");
     })
 };
 
 function displayButtons() {
-    console.log("gettingHistory");
+
     var buttons = JSON.parse(localStorage.getItem("weatherArray") || []);
     for(var i = 0; i < buttons.length; i++) {
         createButton(buttons[i]);
@@ -114,11 +100,7 @@ function displayButtons() {
 
 $("#search-button").on("click", function (event) {
     event.preventDefault();
-    // var that = this.dataset.name;
-    // console.log(that.dataset.name)
-    // console.log(that);
-    // console.log(this);
-    // console.log($(this).attr("data-name"));
+
     getCoords();
     // .then(function (latLong) {
         //     getDeets(latLong);
