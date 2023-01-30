@@ -1,10 +1,10 @@
+// to-do: get displayButtons function to work so that I can remove button creation from getCoords - create buttons by iterating through weatherArray
+// when I click on button use data-name as key to put into getDeets function and make a new search
+// figure out what is the best way to search through coordinates with object
+// 
 
 
 
-// to-do list:
-// make my getCoords function modular, so that the key will be the first part of this function
-// i.e. the name of the city: this function will also make it so that the data-name of the button is set as search-input value
-// so that in subsequent clicks of the weather button the key will be the data-name, and the value will be the result of an ajax call to the API second getDeets() function.
 var apiKey = "6351c18f15de8f5271ba27903fcd1031";
 
 function getCoords() {
@@ -19,47 +19,81 @@ function getCoords() {
         var lat = coordsObj[0].lat
         var long = coordsObj[0].lon
 
-        var cityButton = $("<button>");
-        cityButton.addClass("weather-btn");
-        cityButton.attr("data-name", coordsObj[0].name);
-        cityButton.text(coordsObj[0].name);
-        var history = $("#history");
-        history.append(cityButton);
+        // var cityButton = $("<button>");
+        // cityButton.addClass("weather-btn");
+        // cityButton.attr("data-name", coordsObj[0].name);
+        // cityButton.text(coordsObj[0].name);
+        // var history = $("#history");
+        // history.append(cityButton);
              
         // Question: how to pass results from one call to another?
         // How to return multiple values?
-        // How to install extensions?
         // How do arrow functions work, in the way they operate with "this"?
         // How do I get "this" to be passed from one function to another?
         // How does event delegation work and when is it necessary?
         // Clarifying again what is the purpose of parsing here and in cal project
-        var weatherObject = {};
-        var cityName = coordsObj[0].name;
-        var latLong = {
+        // How do you reference the key of an object if you don't know the property of the object?
+        // When to use bracket notation 
+
+        var city = {
+            name: coordsObj[0].name,
             lat: lat,
             long: long
         };
-        weatherObject[cityName] = latLong;
-        console.log(weatherObject);
 
-        var weatherArray = JSON.parse(localStorage.getItem("weatherArray")) || [];
-        weatherArray.push(weatherObject);
-        localStorage.setItem("weatherArray", JSON.stringify(weatherArray));
-        console.log(weatherArray);
-        return latLong;
+        getDeets(city);
+        saveToLS(city);
+        
     })
 };
 
+function saveToLS(cityArb) {
+    var weatherArray = JSON.parse(localStorage.getItem("weatherArray")) || [];
+    for(var i = 0; i < weatherArray.length; i++) {
+        if(cityArb.name === weatherArray[i].name) {
+            return;
+        }
+    } 
+        weatherArray.push(cityArb);
+        localStorage.setItem("weatherArray", JSON.stringify(weatherArray));
+        console.log(weatherArray);
+        createButton(cityArb);
+}
 
 
-function getDeets(latLong) {
 
-    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latLong.lat + "&lon=" + latLong.long + "&appid=" + apiKey;
+function createButton(city) {
+    var cityButton = $("<button>");
+    cityButton.addClass("weather-btn");
+    cityButton.attr("data-name", city.name);
+    cityButton.attr("data-lat", city.lat);
+    cityButton.attr("data-long", city.long);
+    cityButton.text(city.name);
+    var history = $("#history");
+    history.append(cityButton);
+    cityButton.on("click", infoFromButton);
+    
+}
+
+function infoFromButton() {
+    console.log(this);
+    var city = {
+        name: $(this).data("name"),
+        lat: $(this).data("lat"),
+        long: $(this).data("long"),
+
+    }
+    getDeets(city)
+}
+
+function getDeets(args) {
+    console.log(args);
+    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + args.lat + "&lon=" + args.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
-
+        
         var todayTemp = $("#temp");
         todayTemp.text(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
@@ -69,17 +103,13 @@ function getDeets(latLong) {
     })
 };
 
-// function displayButtons() {
-//     var buttons = JSON.parse(localStorage.getItem("weatherArray"))
-//     for(var i = 0; i < buttons.length; i++) {
-//         var cityButton = $("<button>");
-//         cityButton.addClass("weather-btn");
-//         cityButton.attr("data-name", buttons[i].name);
-//         cityButton.text(buttons[i].name);
-//         var history = $("#history");
-//         history.append(cityButton);
-//     }
-// }
+function displayButtons() {
+    console.log("gettingHistory");
+    var buttons = JSON.parse(localStorage.getItem("weatherArray") || []);
+    for(var i = 0; i < buttons.length; i++) {
+        createButton(buttons[i]);
+    }
+}
 
 
 $("#search-button").on("click", function (event) {
@@ -89,21 +119,25 @@ $("#search-button").on("click", function (event) {
     // console.log(that);
     // console.log(this);
     // console.log($(this).attr("data-name"));
-    getCoords().then(function (latLong) {
-        getDeets(latLong);
+    getCoords();
+    // .then(function (latLong) {
+        //     getDeets(latLong);
         // console.log(latLong);
     });
-});
-
-
-// $(".weather-btn").each(function () {
-//     $(this).on("click", function (event) {
-//         event.preventDefault();
-//         getCoords.bind(this)().then(function (latLong) {
-//             getDeets(latLong);
-//         });
-//     });
-// });
+    // });
+    
+displayButtons();
+    
+    // $(".weather-btn").each(function () {
+        //     $(this).on("click", function (event) {
+            //         event.preventDefault();
+            //         getCoords.bind(this)().then(function (latLong) {
+                //             getDeets(latLong);
+                //         });
+                //     });
+                // });
+                // $(this).attr("data-name")
+                // $(this).data("name")
 
 var weatherButton = $('.weather-btn');
 
@@ -115,9 +149,9 @@ var weatherButton = $('.weather-btn');
 
 
 
-$(".weather-btn").on("click", function() {
-    console.log("this button works")
-})
+// $(".weather-btn").on("click", function() {
+//     console.log("this button works")
+// })
 
 // Attempting to get search button and weather button to have the same functionality with logic
 
