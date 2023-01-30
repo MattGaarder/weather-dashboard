@@ -1,10 +1,14 @@
 
-var lat = 0;
-var long = 0;
+
 // if we make this weather-btn on click, it will take the search input value as the query parameter.
-// I want to create logic that states if search value is empty, to instead take the data-name attribute of the weather button clicked
-// to be used as the query parameter
-// before
+
+
+// to-do list:
+// make my searchWeather function modular, so that the key will be the first part of this function
+// i.e. the name of the city: this function will also make it so that the data-name of the button is set as search-input value
+// so that in subsequent clicks of the weather button the key will be the data-name, and the value will be the result of an ajax call to the API second getDeets() function.
+
+
 function searchWeather() {
     var apiKey = "6351c18f15de8f5271ba27903fcd1031";
     var queryParam = $("#search-input").val();
@@ -16,8 +20,8 @@ function searchWeather() {
         console.log(queryURL);
         console.log(wobject);
         console.log(wobject[0].name);
-        lat = wobject[0].lat
-        long = wobject[0].lon
+        var lat = wobject[0].lat
+        var long = wobject[0].lon
         console.log(lat);
         console.log(long);
         // create a button and append it to the #history div- this button will have data-name be wobject[0].name
@@ -28,12 +32,24 @@ function searchWeather() {
         cityButton.text(wobject[0].name);
         var history = $("#history");
         history.append(cityButton);
+        var latLong = {
+            lat: lat,
+            long: long
+        };
+        console.log(latLong.lat);
+        console.log(latLong);
+        return latLong;
     })
-    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + long + "&appid=" + apiKey;
+};
+
+function getDeets(latLong) {
+    console.log(latLong.lat);
+    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latLong.lat + "&lon=" + latLong.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
     }).then(function (object) {
+        console.log(object);
         var todayTemp = $("#temp");
         todayTemp.text(object.list[0].main.temp);
         var todayHumidity = $("#humidity");
@@ -41,22 +57,47 @@ function searchWeather() {
         var todayWind = $("#wind");
         todayWind.text(object.list[0].wind.speed);
     })
-}
+};
 
 
 $(".search-button").on("click", function(event){
     event.preventDefault();
-    searchWeather();
+    searchWeather().then(function(latLong) {
+    getDeets(latLong);
+    });
 });
+
 $(".weather-btn").on("click", function() {
     console.log("this button works")
 })
 
 
 
+// code excerpt from daily-planner
+// $('.saveBtn').on("click", function(event) {
+//     console.log("saving");
+    
+//     var calendarObject = JSON.parse(localStorage.getItem("cal"))||{};
+
+//     // if(!calendarObject){
+//     //     calendarObject = {};
+//     // }
+
+//     console.log(calendarObject);
 
 
+//     var textArea = $(this).parent().find('.block');
+//     var textAreaContent = textArea.val();
+//     var textAreaId = textArea.attr('id');
+//     // in this case when using the assignment operator- is this equivalent to the colon in an object?
 
+//     calendarObject[textAreaId] = textAreaContent
+    
+//     console.log(calendarObject);
+
+//     console.log(textAreaId, textAreaContent);
+//     localStorage.setItem("cal", JSON.stringify(calendarObject));
+// });
 
 
 
