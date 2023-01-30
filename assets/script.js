@@ -1,14 +1,5 @@
 
 
-// if we make this weather-btn on click, it will take the search input value as the query parameter.
-
-
-// hypotheticalWeatherObject = {
-//    cityName: (coordsObj[0].name) as generated from getCoords() function. But, this has been saved as a data-attribute, which we can recall by saying $(this).data("name"),
-//    latLong: {lat: lat,
-//     long: long}        
-// }
-
 
 // to-do list:
 // make my getCoords function modular, so that the key will be the first part of this function
@@ -23,36 +14,26 @@ function getCoords() {
     return $.ajax({
         url: queryURL,
         method: "GET"
-    }).then(function (coordsObj) {
-        // console.log(queryURL);
-        // console.log(coordsObj);
-        // console.log(coordsObj[0].name);
+    }).then(function(coordsObj) {
+
         var lat = coordsObj[0].lat
         var long = coordsObj[0].lon
-        // console.log(lat);
-        // console.log(long);
-        // create a button and append it to the #history div- this button will have data-name be coordsObj[0].name
-        // I also need to add a class to each button so that I can add an event listener on all buttons with the class .weather-btn
+
         var cityButton = $("<button>");
         cityButton.addClass("weather-btn");
         cityButton.attr("data-name", coordsObj[0].name);
         cityButton.text(coordsObj[0].name);
         var history = $("#history");
         history.append(cityButton);
-        
-        // console.log(latLong.lat);
-        
-
-        
-        // Question: Is this necessary- how to pass results from one call to another?
+             
+        // Question: how to pass results from one call to another?
         // How to return multiple values?
         // How to install extensions?
         // How do arrow functions work, in the way they operate with "this"?
         // How do I get "this" to be passed from one function to another?
         // How does event delegation work and when is it necessary?
         // Clarifying again what is the purpose of parsing here and in cal project
-        var weatherObject = JSON.parse(localStorage.getItem("savedWeatherObject"))||{};
-        // I think I am getting the savedWeatherObject and then overwritting it
+        var weatherObject = {};
         var cityName = coordsObj[0].name;
         var latLong = {
             lat: lat,
@@ -60,10 +41,11 @@ function getCoords() {
         };
         weatherObject[cityName] = latLong;
         console.log(weatherObject);
+
         var weatherArray = JSON.parse(localStorage.getItem("weatherArray")) || [];
         weatherArray.push(weatherObject);
         localStorage.setItem("weatherArray", JSON.stringify(weatherArray));
-        
+        console.log(weatherArray);
         return latLong;
     })
 };
@@ -71,13 +53,13 @@ function getCoords() {
 
 
 function getDeets(latLong) {
-    // console.log(latLong);
+
     var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latLong.lat + "&lon=" + latLong.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
-        // console.log(weatherObj);
+
         var todayTemp = $("#temp");
         todayTemp.text(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
@@ -88,9 +70,17 @@ function getDeets(latLong) {
 };
 
 // function displayButtons() {
-//     var buttons = JSON.parse(localStorage.getItem("savedWeatherObject"))
-//     for(var i = 0; i < )
+//     var buttons = JSON.parse(localStorage.getItem("weatherArray"))
+//     for(var i = 0; i < buttons.length; i++) {
+//         var cityButton = $("<button>");
+//         cityButton.addClass("weather-btn");
+//         cityButton.attr("data-name", buttons[i].name);
+//         cityButton.text(buttons[i].name);
+//         var history = $("#history");
+//         history.append(cityButton);
+//     }
 // }
+
 
 $("#search-button").on("click", function (event) {
     event.preventDefault();
@@ -99,11 +89,21 @@ $("#search-button").on("click", function (event) {
     // console.log(that);
     // console.log(this);
     // console.log($(this).attr("data-name"));
-    getCoords().then((latLong) => {
+    getCoords().then(function (latLong) {
         getDeets(latLong);
         // console.log(latLong);
     });
 });
+
+
+// $(".weather-btn").each(function () {
+//     $(this).on("click", function (event) {
+//         event.preventDefault();
+//         getCoords.bind(this)().then(function (latLong) {
+//             getDeets(latLong);
+//         });
+//     });
+// });
 
 var weatherButton = $('.weather-btn');
 
