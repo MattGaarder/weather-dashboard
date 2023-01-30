@@ -74,6 +74,7 @@ function getDeets(args) {
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
+        console.log(weatherObj.)
         var cityName = $(".card-title");
         cityName.text(args.name);
         var date = $(".time-title");
