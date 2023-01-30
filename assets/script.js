@@ -38,8 +38,12 @@ function getCoords() {
         // console.log(latLong.lat);
         
         return latLong;
+        // Question: Is this necessary- how to pass results from one call to another?
+        // How to return multiple values?
     })
 };
+
+
 
 function getDeets(latLong) {
     console.log(latLong);
@@ -67,9 +71,23 @@ $(".search-button").on("click", function(event){
     });
 });
 
+
+
+
+
 $(".weather-btn").on("click", function() {
     console.log("this button works")
 })
+
+// Attempting to get search button and weather button to have the same functionality with logic
+
+// $(".weather-btn").each(function () {
+//     $(this).on("click", function (event) {
+//         event.preventDefault();
+//         var queryParam = $("#search-input").val();
+//         if ($("#search-input").val() === "") {
+//             queryParam = $(this).attr("data-name");
+//         }
 
 
 
