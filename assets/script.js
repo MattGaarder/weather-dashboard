@@ -74,7 +74,32 @@ function getDeets(args) {
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
-        console.log(weatherObj.)
+
+
+        let dt_txt_array = [];
+        var middayArray = [];
+        for (let i = 0; i < weatherObj.list.length; i++) {
+        dt_txt_array.push(weatherObj.list[i].dt_txt);
+        // console.log(dt_txt_array);
+        for (let i = 0; i < dt_txt_array.length; i++){
+            if(dt_txt_array[i].includes("12:00:00")){
+                middayArray.push(dt_txt_array[i])
+            }
+             
+        }
+
+        
+        // console.log(weatherObj.list[0].dt_txt)
+        // var weatherTime = weatherObj.list[0].dt_txt
+        
+    }
+    console.log(middayArray)
+    return middayArray;
+    // if (weatherTime.includes("12:00:00"))
+    //     console.log("This includes 12")
+    //     console.log(weatherObj.list[0].dt_txt);
+    // }
+    
         var cityName = $(".card-title");
         cityName.text(args.name);
         var date = $(".time-title");
