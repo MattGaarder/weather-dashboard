@@ -77,23 +77,20 @@ function getDeets(args) {
 
         console.log(weatherObj.list[0].dt_txt)
         console.log(weatherObj.list[1].dt_txt)
-        let dt_txt_array = [];
         var middayArray = [];
         for (let i = 0; i < weatherObj.list.length; i++) {
-        dt_txt_array.push(weatherObj.list[i].dt_txt);
-    }
-    // console.log(dt_txt_array);
-        // console.log(dt_txt_array);
-        for (let k = 0; k < dt_txt_array.length; k++){
-            if(dt_txt_array[k].includes("12:00:00")){
-                middayArray.push(dt_txt_array[k])
+            if(weatherObj.list[i].dt_txt.includes("12:00:00")){
+                middayArray.push(weatherObj.list[i].main.temp, weatherObj.list[i].main.humidity, weatherObj.list[i].wind.speed)
             }
-        }
+                $("span").each(function (i) {
+                $(this).text(middayArray[i]);
+            });
+    }
+console.log(middayArray);
 
 // Now that I have an array with all of the middays I can then work with the k index to get the various things from that part of the object
 // to display on the HTML
     // }
-    console.log(middayArray)
     // return middayArray;
 
     // console.log(weatherObj.list[0].dt_txt)
