@@ -2,7 +2,7 @@
 // when I click on button use data-name as key to put into getDeets function and make a new search
 // figure out what is the best way to search through coordinates with object
 // 
-
+// weatherWrapper = $("#weather-wrapper");
 
 var currentDay = moment().format("ddd D MMM YYYY");
 var apiKey = "6351c18f15de8f5271ba27903fcd1031";
@@ -15,7 +15,7 @@ function getCoords() {
         url: queryURL,
         method: "GET"
     }).then(function(coordsObj) {
-
+        console.log(coordsObj);
         var lat = coordsObj[0].lat
         var long = coordsObj[0].lon
 
@@ -69,7 +69,7 @@ function infoFromButton() {
 
 function getDeets(args) {
     // console.log(args.name);
-    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + args.lat + "&lon=" + args.long + "&appid=" + apiKey;
+    var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + args.lat + "&lon=" + args.long + "&appid=" + apiKey + "&units=metric";
     $.ajax({
         url: forecast5URL,
         method: "GET"
@@ -86,7 +86,7 @@ function getDeets(args) {
                 $(this).text(middayArray[i]);
             });
     }
-// console.log(middayArray);
+console.log(middayArray);
 
 // Now that I have an array with all of the middays I can then work with the k index to get the various things from that part of the object
 // to display on the HTML
@@ -99,7 +99,7 @@ function getDeets(args) {
     //     console.log("This includes 12")
     //     console.log(weatherObj.list[0].dt_txt);
     // }
-    
+        // weatherWrapper.removeClass("hide");
         var cityName = $(".card-title");
         cityName.text(args.name);
         var date = $(".time-title");
@@ -116,12 +116,14 @@ function getDeets(args) {
         date5.text(moment().add(5, 'days').format("ddd D MMM"));
         var todayTemp = $("#temp");
         todayTemp.text(weatherObj.list[0].main.temp);
+        console.log(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
         todayHumidity.text(weatherObj.list[0].main.humidity);
         var todayWind = $("#wind");
         todayWind.text(weatherObj.list[0].wind.speed);
         var weatherIcon = $("#weather-icon");
         weatherIcon.attr("src", "http://openweathermap.org/img/wn/" + weatherObj.list[0].weather[0].icon + "@4x.png");
+        $("#weather-wrapper").removeClass("hide");
     })
 };
 
@@ -136,6 +138,8 @@ function displayButtons() {
 
 $("#search-button").on("click", function (event) {
     event.preventDefault();
+    
+    
 
     getCoords();
     // .then(function (latLong) {
