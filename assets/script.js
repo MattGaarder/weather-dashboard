@@ -68,25 +68,25 @@ function infoFromButton() {
 }
 
 function getDeets(args) {
-    console.log(args.name);
+    // console.log(args.name);
     var forecast5URL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + args.lat + "&lon=" + args.long + "&appid=" + apiKey;
     $.ajax({
         url: forecast5URL,
         method: "GET"
     }).then(function (weatherObj) {
 
-        console.log(weatherObj.list[0].dt_txt)
-        console.log(weatherObj.list[1].dt_txt)
+        // console.log(weatherObj.list[0].dt_txt)
+        // console.log(weatherObj.list[1].dt_txt)
         var middayArray = [];
         for (let i = 0; i < weatherObj.list.length; i++) {
             if(weatherObj.list[i].dt_txt.includes("12:00:00")){
                 middayArray.push(weatherObj.list[i].main.temp, weatherObj.list[i].main.humidity, weatherObj.list[i].wind.speed)
             }
-                $("span").each(function (i) {
+                $("span").slice(3).each(function (i) {
                 $(this).text(middayArray[i]);
             });
     }
-console.log(middayArray);
+// console.log(middayArray);
 
 // Now that I have an array with all of the middays I can then work with the k index to get the various things from that part of the object
 // to display on the HTML
@@ -104,6 +104,16 @@ console.log(middayArray);
         cityName.text(args.name);
         var date = $(".time-title");
         date.text(currentDay);
+        var date1 = $(".card-title-1");
+        date1.text(moment().add(1, 'days').format("ddd D MMM"));
+        var date2 = $(".card-title-2");
+        date2.text(moment().add(2, 'days').format("ddd D MMM"));
+        var date3 = $(".card-title-3");
+        date3.text(moment().add(3, 'days').format("ddd D MMM"));
+        var date4 = $(".card-title-4");
+        date4.text(moment().add(4, 'days').format("ddd D MMM"));
+        var date5 = $(".card-title-5");
+        date5.text(moment().add(5, 'days').format("ddd D MMM"));
         var todayTemp = $("#temp");
         todayTemp.text(weatherObj.list[0].main.temp);
         var todayHumidity = $("#humidity");
